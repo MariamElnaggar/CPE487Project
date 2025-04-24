@@ -29,3 +29,8 @@
 * You may also start with some of the components from the simulation exercices and approach the project from more of a true digital logic perspective using combinational and sequential logic techniques in a sufficiently advanced way.
 * You may instead peruse the following list of projects (or outside project sources) for some ideas. Some of these were personally vetted by me (Prof. Yett), others came prior to my time at Stevens. 
 * If you choose to start from an existing project and make substanstial changes/improvements, you must cite your starting place! This goes for the labs, these projects, or any others you may find. Do not pass off someone else's work as your own and you'll do just fine.
+# Our Project
+A reaction game to measure the user's reaction time.
+Base code repositories for our project:
+- For the clock: https://github.com/cfoote5/CPE487_FinalProject
+- For the Display: https://github.com/beartwoz/Whack-A-Mole

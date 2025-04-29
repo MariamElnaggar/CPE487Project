@@ -34,3 +34,18 @@ A reaction game to measure the user's reaction time.
 Base code repositories for our project:
 - For the clock: https://github.com/cfoote5/CPE487_FinalProject
 - For the Display: https://github.com/beartwoz/Whack-A-Mole
+## Summary
+For our project we decided to work on creating a reaction test that would challege the player to react to the display as fast as they can. From when the game begins a stopwatch would start on the display of the Nexys A7 100T board and stop once the user hit the button corresponding to what is shown on the VGA screen. In order to accomplish this we used base code from the clock and whack-a-mole projects which can be found [here](-------). These projects provided a good starting point for implementing a clock that would display milliseconds and developing the VGA display that the player would interact with.
+## Expected Behavior
+![Demonstration](-------)
+- The clock will start from zero and count until the player successfully hits the necessary button.
+- The VGA screen will display a four blocks (positioned up, down, left, and right) and whichever block turns green the player must hit the corresponding button on the board.
+- The goal is to test how fast the player can react.
+- The game will play for three rounds.
+- The average time over the three rounds is the players score.
+## Requirments
+- Nexys A7 100T Board
+- Micro-USB to USB Cable
+- Computer with Vivado installed
+- Monitor
+- VGA Cable

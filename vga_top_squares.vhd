@@ -174,15 +174,21 @@ BEGIN
         btn_clk <= cnt(25); 
   
         
-    hole_and_keypad_logic_proc: PROCESS (cnt)
+    hole_and_button_logic_proc: PROCESS (cnt)
         VARIABLE rng_seed : INTEGER := 42; -- Seed for random number generation
         VARIABLE random_index : INTEGER := 0; -- Random value holder
         CONSTANT kp_clk_bit : INTEGER := 10; -- Fast clock bit for updating
         VARIABLE debounce_counter : INTEGER RANGE 0 TO 10 := 0; -- Debounce counter
         VARIABLE kp_hit_debounced : STD_LOGIC := '0'; -- Debounced key press signal
+        VARIABLE seed_initialized : BOOLEAN := FALSE;
     BEGIN
         IF rising_edge(cnt(kp_clk_bit)) THEN
             -- Ensure at least one hole is active at the start of the game
+            IF NOT seed_initialized THEN
+                rng_seed := to_integer(unsigned(cnt(30 DOWNTO 0)));
+                seed_initialized := TRUE;
+            END IF; 
+            
             IF active_holes = (3 DOWNTO 0 => '0') THEN
                 -- Initialize the first active mole
                 rng_seed := (rng_seed * 1103515245 + 12345) MOD 32768; -- Initialize RNG

@@ -177,12 +177,9 @@ BEGIN
     hole_and_button_logic_proc: PROCESS (cnt)
         VARIABLE rng_seed : INTEGER := 42; -- Seed for random number generation
         VARIABLE random_index : INTEGER := 0; -- Random value holder
-        CONSTANT kp_clk_bit : INTEGER := 10; -- Fast clock bit for updating
-        VARIABLE debounce_counter : INTEGER RANGE 0 TO 10 := 0; -- Debounce counter
-        VARIABLE kp_hit_debounced : STD_LOGIC := '0'; -- Debounced key press signal
         VARIABLE seed_initialized : BOOLEAN := FALSE;
     BEGIN
-        IF rising_edge(cnt(kp_clk_bit)) THEN
+        IF rising_edge(cnt(10)) THEN
             -- Ensure at least one hole is active at the start of the game
             IF NOT seed_initialized THEN
                 rng_seed := to_integer(unsigned(cnt(30 DOWNTO 0)));

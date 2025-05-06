@@ -1,5 +1,7 @@
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
+USE IEEE.NUMERIC_STD.ALL;
+USE IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 ENTITY leddec16 IS
 	PORT (
@@ -11,12 +13,40 @@ END leddec16;
 
 ARCHITECTURE Behavioral OF leddec16 IS
 	SIGNAL data4 : STD_LOGIC_VECTOR (3 DOWNTO 0); -- binary value of current digit
+	SIGNAL decimal_value : STD_LOGIC_VECTOR (15 DOWNTO 0);
 BEGIN
+    -- change binary to decimal
+	PROCESS(data)
+		VARIABLE temp : STD_LOGIC_VECTOR(15 DOWNTO 0);
+		VARIABLE decimal : UNSIGNED(15 DOWNTO 0) := (OTHERS => '0');
+		VARIABLE binary : UNSIGNED(15 DOWNTO 0);
+	BEGIN
+		binary := unsigned(data);
+		decimal := (OTHERS => '0');
+		
+		for i in 0 to 15 loop
+			if decimal(3 downto 0) > 4 then 
+				decimal(3 downto 0) := decimal(3 downto 0) + 3;
+			end if;
+			if decimal(7 downto 4) > 4 then 
+				decimal(7 downto 4) := decimal(7 downto 4) + 3;
+			end if;
+			if decimal(11 downto 8) > 4 then 
+				decimal(11 downto 8) := decimal(11 downto 8) + 3;
+			end if;
+			
+			-- Shift left
+			decimal := decimal(14 downto 0) & binary(15);
+			binary := binary(14 downto 0) & '0';
+		end loop;
+		
+		decimal_value <= std_logic_vector(decimal);
+	END PROCESS;
 	-- Select digit data to be displayed in this mpx period
-	data4 <= data(3 DOWNTO 0) WHEN dig = "000" ELSE -- digit 0
-	         data(7 DOWNTO 4) WHEN dig = "001" ELSE -- digit 1
-	         data(11 DOWNTO 8) WHEN dig = "010" ELSE -- digit 2
-	         data(15 DOWNTO 12); -- digit 3
+	data4 <= decimal_value(3 DOWNTO 0) WHEN dig = "000" ELSE -- digit 0
+	         decimal_value(7 DOWNTO 4) WHEN dig = "001" ELSE -- digit 1
+	         decimal_value(11 DOWNTO 8) WHEN dig = "010" ELSE -- digit 2
+	         decimal_value(15 DOWNTO 12); -- digit 3
 	-- Turn on segments corresponding to 4-bit data word
 	seg <= "0000001" WHEN data4 = "0000" ELSE -- 0
 	       "1001111" WHEN data4 = "0001" ELSE -- 1
@@ -28,21 +58,11 @@ BEGIN
 	       "0001111" WHEN data4 = "0111" ELSE -- 7
 	       "0000000" WHEN data4 = "1000" ELSE -- 8
 	       "0000100" WHEN data4 = "1001" ELSE -- 9
-	       "0001000" WHEN data4 = "1010" ELSE -- A
-	       "1100000" WHEN data4 = "1011" ELSE -- B
-	       "0110001" WHEN data4 = "1100" ELSE -- C
-	       "1000010" WHEN data4 = "1101" ELSE -- D
-	       "0110000" WHEN data4 = "1110" ELSE -- E
-	       "0111000" WHEN data4 = "1111" ELSE -- F
 	       "1111111";
-	-- Turn on anode of 7-segment display addressed by 3-bit digit selector dig
+	-- Turn on anode of 4-segment display addressed by 3-bit digit selector dig
 	anode <= "11111110" WHEN dig = "000" ELSE -- 0
 	         "11111101" WHEN dig = "001" ELSE -- 1
 	         "11111011" WHEN dig = "010" ELSE -- 2
 	         "11110111" WHEN dig = "011" ELSE -- 3
---	         "11101111" WHEN dig = "100" ELSE -- 4
---	         "11011111" WHEN dig = "101" ELSE -- 5 
---	         "10111111" WHEN dig = "110" ELSE -- 6
---	         "01111111" WHEN dig = "111" ELSE -- 7
 	         "11111111";
 END Behavioral;

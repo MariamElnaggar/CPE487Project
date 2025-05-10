@@ -68,24 +68,25 @@ For our project we decided to work on creating a reaction test that would challe
 - Click 'Program Device' to download the program to the Nexys A7-100T board.
 ## Description of the modules
 ### ***clk_1kHz.vhd***
-
+This module produces a 1 kHz clock output (clk2) from a higher-frequency clock input. It uses a counter that toggles the output every 50,000 cycles. This clock pulses every millisecond and was implemented to time to player.
 
 ### ***clk_wiz_0.vhd***
-
+This module defines a clock management module that generates a stable system clock (clk_out1) from a primary input clock (clk_in1). This module ensures that all time-dependent components—such as the VGA synchronization (vga_sync), the 1 kHz and 1 Hz clock dividers, and display timing logic—receive a precise and reliable clock signal.
 
 ### ***clk_wiz_0_clk_wiz.vhd***
-
+This module is an auto-generated clock management module from Vivado. This module is used to help ensure that the system operates with properly derived clock signals, helping reduce timing errors.
 
 ### ***clock_1Hz***
-
+This module creates a 1 Hz clock pulse from a faster input clock. It uses a counter that toggles an internal signal every 50 million clock cycles, effectively dividing the clock to 1 Hz.
 
 ### ***leddec16.vhd***
-
+This module implements a display decoder that shows 4-digit hexadecimal values on an 8-digit 7-segment display. It selects which digit to display using the dig input and extracts a 4-bit data point from the 16-bit data input to convert into segment outputs (seg). It also activates the corresponding anode for the selected digit.
 
 ### ***squares.vhd***
-
+This module determines whether the current VGA pixel lies within a user-defined square. It uses input coordinates (x_pos, y_pos) as the top-left corner of the square and compares them with the current pixel column and row values. If the pixel lies within the square and the active signal is high, it outputs colored signals (red, green). This module forms the core of rendering geometric shapes on the screen.
 
 ### ***vga_sync.vhd***
-
+This module generates the necessary VGA timing signals to produce a correct image on screen. It takes a pixel clock and RGB inputs and outputs hsync, vsync, pixel row and column positions (pixel_row, pixel_col), and routed RGB signals.
 
 ### ***vga_top_squares.vhd***
+This module serves as the top level entity named vga_top. This module directs the entire VGA display system receiving input from directional buttons (btnl, btnr, btnu, btnd) and driving the VGA output signals (vga_red, vga_green, vga_blue, vga_hsync, vga_vsync). It integrates submodules for clocking, synchronization, square drawing, and LED display. Additionally, it outputs data to a 7-segment display through SEG7_anode for score.

@@ -35,17 +35,57 @@ Base code repositories for our project:
 - For the clock: https://github.com/cfoote5/CPE487_FinalProject
 - For the Display: https://github.com/beartwoz/Whack-A-Mole
 ## Summary
-For our project we decided to work on creating a reaction test that would challege the player to react to the display as fast as they can. From when the game begins a stopwatch would start on the display of the Nexys A7 100T board and stop once the user hit the button corresponding to what is shown on the VGA screen. In order to accomplish this we used base code from the clock and whack-a-mole projects which can be found [here](-------). These projects provided a good starting point for implementing a clock that would display milliseconds and developing the VGA display that the player would interact with.
+For our project we decided to work on creating a reaction test that would challege the player to react to the display as fast as they can. From when the game begins four red blocks would appear on the display and at a random time one will turn green. Once the player successfully hit the three neccessary blocks the NexysA7 100T board will display the players average reaction time. In order to accomplish this we used base code from the clock and whack-a-mole projects which can be found [here](-------). These projects provided a good starting point for implementing a clock that would display milliseconds and developing the VGA display that the player would interact with.
 ## Expected Behavior
 ![Demonstration](-------)
-- The clock will start from zero and count until the player successfully hits the necessary button.
 - The VGA screen will display a four blocks (positioned up, down, left, and right) and whichever block turns green the player must hit the corresponding button on the board.
 - The goal is to test how fast the player can react.
 - The game will play for three rounds.
 - The average time over the three rounds is the players score.
+- The players score will display on the board in milliseconds.
 ## Requirments
 - Nexys A7 100T Board
 - Micro-USB to USB Cable
 - Computer with Vivado installed
 - Monitor
 - VGA Cable
+## Program Setup
+### 1. Create new RTL project React_test in Vivado Quick Start
+- Create eight new source files of file type VHDL called ***clk_1kHz***, ***Clock_1Hz***, ***clk_wiz_0***, ***clk_wiz_0_clk_wiz***, ***leddec16***, ***squares***, ***vga_sync***, and ***vga_top_squares***.
+
+- Create a new constraint file of file type XDC called ***allcons***.
+- Choose Nexys A7-100T board for the project
+- Click 'Finish'
+- Click design sources and copy the VHDL code from the repo.
+- Click contraints and copy the code from allcons.xdc
+- As an alternative, you can instead download files from Github and import them into your project when creating the project. The source file or files would still be imported during the Source step, and the constraint file or files would still be imported during the Constraints step.
+
+### 2. Run synthesis
+### 3. Run implementation
+### 4. Generate bitstream, open hardware manager, and program device.
+- Click 'Generate Bitstream'
+- Click 'Open Hardware Manager' and click "Open Target' then 'Auto Connect'
+- Click 'Program Device' to download the program to the Nexys A7-100T board.
+## Description of the modules
+### ***clk_1kHz.vhd***
+
+
+### ***clk_wiz_0.vhd***
+
+
+### ***clk_wiz_0_clk_wiz.vhd***
+
+
+### ***clock_1Hz***
+
+
+### ***leddec16.vhd***
+
+
+### ***squares.vhd***
+
+
+### ***vga_sync.vhd***
+
+
+### ***vga_top_squares.vhd***

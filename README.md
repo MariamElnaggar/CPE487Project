@@ -30,19 +30,15 @@
 * You may instead peruse the following list of projects (or outside project sources) for some ideas. Some of these were personally vetted by me (Prof. Yett), others came prior to my time at Stevens. 
 * If you choose to start from an existing project and make substanstial changes/improvements, you must cite your starting place! This goes for the labs, these projects, or any others you may find. Do not pass off someone else's work as your own and you'll do just fine.
 # Our Project
-A reaction game to measure the user's reaction time.
-Base code repositories for our project:
-- For the clock: https://github.com/cfoote5/CPE487_FinalProject
-- For the Display: https://github.com/beartwoz/Whack-A-Mole
 ## Summary
-For our project we decided to work on creating a reaction test that would challege the player to react to the display as fast as they can. From when the game begins four red blocks would appear on the display and at a random time one will turn green. Once the player successfully hit the three neccessary blocks the NexysA7 100T board will display the players average reaction time. In order to accomplish this we used base code from the clock and whack-a-mole projects which can be found [here](-------). These projects provided a good starting point for implementing a clock that would display milliseconds and developing the VGA display that the player would interact with.
+For our project we decided to work on creating a reaction test that would challege the player to react to the display as fast as they can. From when the game begins four red blocks would appear on the display and at a random time one will turn green. Once the player successfully hit the three neccessary blocks the NexysA7 100T board will display the players average reaction time. In order to accomplish this we used base code from the [clock](https://github.com/cfoote5/CPE487_FinalProject) and [whack-a-mole](https://github.com/beartwoz/Whack-A-Mole) projects. These projects provided a good starting point for implementing a clock that would display milliseconds and developing the VGA display that the player would interact with.
 ## Expected Behavior
-[Demonstration](https://drive.google.com/file/d/1wT0SU7qmNwO605OzWVExHnS3_MaBIyPG/view?usp=sharing)
 - The VGA screen will display a four blocks (positioned up, down, left, and right) and whichever block turns green the player must hit the corresponding button on the board.
 - The goal is to test how fast the player can react.
 - The game will play for three rounds.
 - The average time over the three rounds is the players score.
 - The players score will display on the board in milliseconds.
+### [Demonstration](https://drive.google.com/file/d/1wT0SU7qmNwO605OzWVExHnS3_MaBIyPG/view?usp=sharing)
 ## Requirments
 - Nexys A7 100T Board
 - Micro-USB to USB Cable
@@ -52,7 +48,6 @@ For our project we decided to work on creating a reaction test that would challe
 ## Program Setup
 ### 1. Create new RTL project React_test in Vivado Quick Start
 - Create eight new source files of file type VHDL called ***clk_1kHz***, ***Clock_1Hz***, ***clk_wiz_0***, ***clk_wiz_0_clk_wiz***, ***leddec16***, ***squares***, ***vga_sync***, and ***vga_top_squares***.
-
 - Create a new constraint file of file type XDC called ***allcons***.
 - Choose Nexys A7-100T board for the project
 - Click 'Finish'
@@ -68,7 +63,7 @@ For our project we decided to work on creating a reaction test that would challe
 - Click 'Program Device' to download the program to the Nexys A7-100T board.
 ## Description of the modules
 ### ***clk_1kHz.vhd***
-This module produces a 1 kHz clock output (clk2) from a higher-frequency clock input. It uses a counter that toggles the output every 50,000 cycles. This clock pulses every millisecond and was implemented to time to player.
+This module produces a 1 kHz clock output (clk2) from a higher-frequency clock input. It uses a counter that toggles the output every 50,000 cycles. This clock pulses every millisecond and was implemented to time to player's reaction times.
 
 ### ***clk_wiz_0.vhd***
 This module defines a clock management module that generates a stable system clock (clk_out1) from a primary input clock (clk_in1). This module ensures that all time-dependent components—such as the VGA synchronization (vga_sync), the 1 kHz and 1 Hz clock dividers, and display timing logic—receive a precise and reliable clock signal.
@@ -77,10 +72,10 @@ This module defines a clock management module that generates a stable system clo
 This module is an auto-generated clock management module from Vivado. This module is used to help ensure that the system operates with properly derived clock signals, helping reduce timing errors.
 
 ### ***clock_1Hz***
-This module creates a 1 Hz clock pulse from a faster input clock. It uses a counter that toggles an internal signal every 50 million clock cycles, effectively dividing the clock to 1 Hz.
+This module creates a 1 Hz clock pulse from a faster input clock. It uses a counter that toggles an internal signal every 50 million clock cycles, effectively dividing the clock to 1 Hz for the display.
 
 ### ***leddec16.vhd***
-This module implements a display decoder that shows 4-digit hexadecimal values on an 8-digit 7-segment display. It selects which digit to display using the dig input and extracts a 4-bit data point from the 16-bit data input to convert into segment outputs (seg). It also activates the corresponding anode for the selected digit.
+This module implements a display decoder that shows 4-digit values on an 8-digit 7-segment display. It selects which digit to display using the dig input and extracts a 4-bit data point from the 16-bit data input to convert into segment outputs (seg). It also activates the corresponding anode for the selected digit.
 
 ### ***squares.vhd***
 This module determines whether the current VGA pixel lies within a user-defined square. It uses input coordinates (x_pos, y_pos) as the top-left corner of the square and compares them with the current pixel column and row values. If the pixel lies within the square and the active signal is high, it outputs colored signals (red, green). This module forms the core of rendering geometric shapes on the screen.

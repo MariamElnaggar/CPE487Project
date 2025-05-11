@@ -63,7 +63,7 @@ For our project we decided to work on creating a reaction test that would challe
 - Click 'Program Device' to download the program to the Nexys A7-100T board.
 ## Description of the modules
 ### ***clk_1kHz.vhd***
-This module produces a 1 kHz clock output (clk2) from a higher-frequency clock input. It uses a counter that toggles the output every 50,000 cycles. This clock pulses every millisecond and was implemented to time to player's reaction times.
+This module produces a 1 kHz clock output (clk2) from the system clock input. It uses a counter that toggles the output every 50,000 cycles. This clock pulses every millisecond and was used to for the 7-segment display.
 
 ### ***clk_wiz_0.vhd***
 This module defines a clock management module that generates a stable system clock (clk_out1) from a primary input clock (clk_in1). This module ensures that all time-dependent components—such as the VGA synchronization (vga_sync), the 1 kHz and 1 Hz clock dividers, and display timing logic—receive a precise and reliable clock signal.
@@ -72,7 +72,7 @@ This module defines a clock management module that generates a stable system clo
 This module is an auto-generated clock management module from Vivado. This module is used to help ensure that the system operates with properly derived clock signals, helping reduce timing errors.
 
 ### ***clock_1Hz***
-This module creates a 1 Hz clock pulse from a faster input clock. It uses a counter that toggles an internal signal every 50 million clock cycles, effectively dividing the clock to 1 Hz for the display.
+This module creates a 1 Hz clock pulse from a faster input clock. It uses a counter that toggles an internal signal every 50 million clock cycles, effectively dividing the clock to 1 Hz for the game timing controlling the rate at which the squares appear.
 
 ### ***leddec16.vhd***
 This module implements a display decoder that shows 4-digit values on an 8-digit 7-segment display. It selects which digit to display using the dig input and extracts a 4-bit data point from the 16-bit data input to convert into segment outputs (seg). It also activates the corresponding anode for the selected digit.

@@ -1,10 +1,3 @@
-# Instructions
-- From https://github.com/byett/dsd/blob/CPE487-Spring2025/projects/README.md
-## Submission (80% of your project grade):
-* Your final submission should be a github repository of very similar format to the labs themselves with an opening README document with the expected components as follows:
-	* “Modifications” (15 points of the Submission category)
-		* If building on an existing lab or expansive starter code of some kind, describe your “modifications” – the changes made to that starter code to improve the code, create entirely new functionalities, etc. Unless you were starting from one of the labs, please share any starter code used as well, including crediting the creator(s) of any code used. It is perfectly ok to start with a lab or other code you find as a baseline, but you will be judged on your contributions on top of that pre-existing code!
-	* Conclude with a summary of the process itself – who was responsible for what components (preferably also shown by each person contributing to the github repository!), the timeline of work completed, any difficulties encountered and how they were solved, etc. (10 points of the Submission category)
 # Our Project
 ## Summary
 For our project we decided to work on creating a reaction test that would challege the player to react to the display as fast as they can. From when the game begins four red blocks would appear on the display and at a random time one will turn green. Once the player successfully hit the three neccessary blocks the NexysA7 100T board will display the players average reaction time. In order to accomplish this we used base code from the [clock](https://github.com/cfoote5/CPE487_FinalProject) and [whack-a-mole](https://github.com/beartwoz/Whack-A-Mole) projects. These projects provided a good starting point for implementing a clock that would display milliseconds and developing the VGA display that the player would interact with.
@@ -42,6 +35,7 @@ For our project we decided to work on creating a reaction test that would challe
 This module produces a 1 kHz clock output (clk2) from the system clock input. It uses a counter that toggles the output every 50,000 cycles. This clock pulses every millisecond and was used to for the 7-segment display.
 - Input: plk_clk (from clk_wiz_0)
 - Output: clk_1khz_out
+- Code from [clk_1kHz.vhd](https://github.com/cfoote5/CPE487_FinalProject/blob/92252b9b1d2d3259ba6e6eb15850c78f039931d4/clk_1kHz.vhd) in [clock](https://github.com/cfoote5/CPE487_FinalProject)
 ### ***clk_wiz_0.vhd***
 This module defines a clock management module that generates a stable system clock (clk_out1) from a primary input clock (clk_in1). This module ensures that all time-dependent components—such as the VGA synchronization (vga_sync), the 1 kHz and 1 Hz clock dividers, and display timing logic—receive a precise and reliable clock signal.
 - Input: clk_in (from board)
@@ -56,6 +50,7 @@ This module is an auto-generated clock management module from Vivado. This modul
 This module creates a 1 Hz clock pulse from a faster input clock. It uses a counter that toggles an internal signal every 50 million clock cycles, effectively dividing the clock to 1 Hz for the game timing controlling the rate at which the squares appear.
 - Input: pxl_clk (from clk_wiz_0)
 - Output: clk_1hz_out
+- Code from [clk_1Hz.vhd](https://github.com/cfoote5/CPE487_FinalProject/blob/92252b9b1d2d3259ba6e6eb15850c78f039931d4/clock_1Hz.vhd) in [clock](https://github.com/cfoote5/CPE487_FinalProject)
 ### ***leddec16.vhd***
 This module implements a display decoder that shows 4-digit values on an 8-digit 7-segment display. It selects which digit to display using the dig input and extracts a 4-bit data point from the 16-bit data input to convert into segment outputs (seg). It also activates the corresponding anode for the selected digit.
 - Input: led_mpx (used to choose the digits), seg7_data (data to display)
@@ -353,3 +348,5 @@ gen_squares: FOR i IN 0 TO 3 GENERATE
     END GENERATE;
 ```
 - Base code from [vga_top_holes.vhd](https://github.com/beartwoz/Whack-A-Mole/blob/c3509649d219f83ef390502cbf7bf8d1a7126aee/vga_top_holes.vhd) in [whack-a-mole](https://github.com/beartwoz/Whack-A-Mole)
+## Conclusion
+* Conclude with a summary of the process itself – who was responsible for what components (preferably also shown by each person contributing to the github repository!), the timeline of work completed, any difficulties encountered and how they were solved, etc. (10 points of the Submission category)

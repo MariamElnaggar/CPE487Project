@@ -28,16 +28,16 @@ BEGIN
             TO_INTEGER(UNSIGNED(pixel_row)) < y_pos + hole_height) THEN
             
             IF active = '1' THEN
-                red <= '0'; -- Hole is active (red)
+                red <= '0'; -- Hole is active (green)
                 green <= '1';
                 blue <= '0';
             ELSE
-                red <= '1'; -- Hole is inactive (black)
+                red <= '1'; -- Hole is inactive (red)
                 green <= '0';
                 blue <= '0';
             END IF;
         ELSE
-            red <= '0'; -- Outside the hole area (background color)
+            red <= '0'; -- Outside the hole area (black)
             green <= '0'; 
             blue <= '0';
         END IF;

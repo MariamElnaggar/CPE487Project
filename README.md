@@ -59,10 +59,64 @@ This module creates a 1 Hz clock pulse from a faster input clock. It uses a coun
 This module implements a display decoder that shows 4-digit values on an 8-digit 7-segment display. It selects which digit to display using the dig input and extracts a 4-bit data point from the 16-bit data input to convert into segment outputs (seg). It also activates the corresponding anode for the selected digit.
 - Input: led_mpx (used to choose the digits), seg7_data (data to display)
 - Output: SEG7_anode (anodes on the display), SEG7_seg (segments to turn on based on the digits)
+#### Modification
+We added the code below to convert our binary data input to decmial and display it on the 7-segment display.
+```
+SIGNAL decimal_value : STD_LOGIC_VECTOR (15 DOWNTO 0);
+BEGIN
+    -- change binary to decimal
+	PROCESS(data)
+		VARIABLE temp : STD_LOGIC_VECTOR(15 DOWNTO 0);
+		VARIABLE decimal : UNSIGNED(15 DOWNTO 0) := (OTHERS => '0');
+		VARIABLE binary : UNSIGNED(15 DOWNTO 0);
+	BEGIN
+		binary := unsigned(data);
+		decimal := (OTHERS => '0');
+		
+		for i in 0 to 15 loop
+			if decimal(3 downto 0) > 4 then 
+				decimal(3 downto 0) := decimal(3 downto 0) + 3;
+			end if;
+			if decimal(7 downto 4) > 4 then 
+				decimal(7 downto 4) := decimal(7 downto 4) + 3;
+			end if;
+			if decimal(11 downto 8) > 4 then 
+				decimal(11 downto 8) := decimal(11 downto 8) + 3;
+			end if;
+			
+			-- Shift left
+			decimal := decimal(14 downto 0) & binary(15);
+			binary := binary(14 downto 0) & '0';
+		end loop;
+		
+		decimal_value <= std_logic_vector(decimal);
+	END PROCESS;
+	data4 <= decimal_value(3 DOWNTO 0) WHEN dig = "000" ELSE -- digit 0
+		         decimal_value(7 DOWNTO 4) WHEN dig = "001" ELSE -- digit 1
+		         decimal_value(11 DOWNTO 8) WHEN dig = "010" ELSE -- digit 2
+		         decimal_value(15 DOWNTO 12); -- digit 3
+		-- Turn on segments corresponding to 4-bit data word
+		seg <= "0000001" WHEN data4 = "0000" ELSE -- 0
+		       "1001111" WHEN data4 = "0001" ELSE -- 1
+		       "0010010" WHEN data4 = "0010" ELSE -- 2
+		       "0000110" WHEN data4 = "0011" ELSE -- 3
+		       "1001100" WHEN data4 = "0100" ELSE -- 4
+		       "0100100" WHEN data4 = "0101" ELSE -- 5
+		       "0100000" WHEN data4 = "0110" ELSE -- 6
+		       "0001111" WHEN data4 = "0111" ELSE -- 7
+		       "0000000" WHEN data4 = "1000" ELSE -- 8
+		       "0000100" WHEN data4 = "1001" ELSE -- 9
+		       "1111111";
+```
+- Base code from [leddec16.vhd](https://github.com/beartwoz/Whack-A-Mole/blob/c3509649d219f83ef390502cbf7bf8d1a7126aee/leddec16.vhd) in [whack-a-mole](https://github.com/beartwoz/Whack-A-Mole)
 ### ***squares.vhd***
 This module determines whether the current VGA pixel lies within a user-defined square. It uses input coordinates (x_pos, y_pos) as the top-left corner of the square and compares them with the current pixel column and row values. If the pixel lies within the square and the active signal is high, it outputs colored signals (red, green). This module forms the core of rendering geometric shapes on the screen.
-- Input: S_pixel_row, S_pixel_col (both from vga_sync), active_holes(i), hole_positions(i)(0) (x_pos), hole_positions(i)(1)(y_pos) (the rest from vga_top_squares)
+- Input: S_pixel_row, S_pixel_col (both from vga_sync), active_holes(i), hole_positions(i)(0) (x_pos), hole_positions(i)(1) (y_pos) (the rest from vga_top_squares)
 - Output: S_red(i), S_green(i), S_blue(i)
+#### Modification
+We changed the size of the squares and their colors
+```
+```
 ### ***vga_sync.vhd***
 This module generates the necessary VGA timing signals to produce a correct image on screen. It takes a pixel clock and RGB inputs and outputs hsync, vsync, pixel row and column positions (pixel_row, pixel_col), and routed RGB signals.
 ### ***vga_top_squares.vhd***

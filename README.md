@@ -205,5 +205,151 @@ END vga_top;
     CONSTANT DIVIDER : INTEGER := CLK_FREQ/1000; -- Converts clock cycles to ms
     SIGNAL clk_1hz_out : STD_LOGIC;
     SIGNAL clk_1khz_out : STD_LOGIC;
+CONSTANT hole_positions : position_array := (
+        (350, 100),  -- up
+        (200, 250),  -- left
+        (500, 250),  -- right
+        (350, 400)   -- down
+    );
+```
+6. Removed the keypad component
+7. Added clk_1Hz and clk_1kHz
+```
+COMPONENT clk_1hz IS
+      PORT (
+        clk : IN STD_LOGIC;
+        clk1 : OUT STD_LOGIC
+      );
+    END COMPONENT;
+
+    COMPONENT clk_1khz IS
+      PORT (
+        clk : IN STD_LOGIC;
+        clk2 : OUT STD_LOGIC
+      );
+    END COMPONENT;
+```
+8. Added instanses of the clocks in our process
+9. Added display process that depends on the clk_1kHz timing
+10. Removed the base code's game logic and added our own
+11. Edited gen_moles so it generates 4 squares instead of 16
+```
+clock_1hz_inst : clk_1hz
+        PORT MAP (
+            clk => pxl_clk,      -- Input from pixel clock
+            clk1 => clk_1hz_out  -- Output 1Hz signal
+        );
+        
+        -- 1kHz clock for display 
+        clock_1khz_inst : clk_1khz
+        PORT MAP (
+            clk => pxl_clk,       -- Input from pixel clock
+            clk2 => clk_1khz_out  -- Output 1kHz signal
+        );
+       
+        ck_proc : PROCESS (pxl_clk)
+        BEGIN
+            IF rising_edge(pxl_clk) THEN -- on rising edge of clock
+                cnt <= cnt + 1; -- increment counter
+            END IF;
+        END PROCESS;
+    
+    
+        game_clk <= clk_1hz_out; 
+        btn_clk <= clk_1hz_out;
+display_mpx_process: PROCESS(clk_1khz_out)
+    BEGIN
+        IF rising_edge(clk_1khz_out) THEN
+            led_mpx <= led_mpx + 1;  -- Cycle through display digits
+            IF led_mpx = "100" THEN  -- Only use first 4 digits (0-3)
+                led_mpx <= "000";
+            END IF;
+        END IF;
+    END PROCESS;
+game_logic_proc: PROCESS(pxl_clk)
+        VARIABLE rng_seed : INTEGER := 42; -- Seed for random number generation
+        VARIABLE random_index : INTEGER := 0; -- Random value holder
+    BEGIN
+        IF rising_edge(pxl_clk) THEN
+            CASE game_state IS
+                    WHEN I =>
+                        -- start game
+                        current_trial <= 0;
+                        rt <= (0, 0, 0);
+                        measuring_time <= '0';
+                        
+                        -- activate one square
+                        rng_seed := (rng_seed * 1103515245 + 12345) MOD 32768;
+                        random_index := rng_seed MOD 4;
+                        active_holes <= (OTHERS => '0');
+                        active_holes(random_index) <= '1';
+                        
+                        game_state <= W;
+                        measuring_time <= '1';
+                        timer_count <= 0;
+                    
+                    WHEN W =>
+                        IF measuring_time = '1' THEN
+                            timer_count <= timer_count + 1;
+                        END IF;
+                    
+                        IF wait_for_next_trial = '1' THEN
+                            next_trial_counter <= next_trial_counter + 1;
+                            IF next_trial_counter = 100000000 THEN
+                                rng_seed := (rng_seed * 1103515245 + 12345) MOD 32768;
+                                random_index := rng_seed MOD 4;
+                                active_holes(random_index) <= '1';
+                                measuring_time <= '1';
+                                timer_count <= 0;
+                                wait_for_next_trial <= '0';
+                                next_trial_counter <= 0;
+                            END IF;
+                        ELSIF (btnu = '1' AND active_holes(0) = '1') OR
+                              (btnl = '1' AND active_holes(1) = '1') OR
+                              (btnr = '1' AND active_holes(2) = '1') OR
+                              (btnd = '1' AND active_holes(3) = '1') THEN
+                    
+                            rt(current_trial) <= timer_count / DIVIDER;
+                            measuring_time <= '0';
+                            active_holes <= (OTHERS => '0');
+                    
+                            IF current_trial < 2 THEN
+                                current_trial <= current_trial + 1;
+                                wait_for_next_trial <= '1';
+                            ELSE
+                                game_state <= C;
+                            END IF;
+                        END IF;
+                        
+                       WHEN C =>
+                            -- get average time
+                            average_time <= ((rt(0)-5000) + rt(1) + rt(2)) / 3;
+                            game_state <= D;
+                    
+                        WHEN D =>
+                            -- display average time on board
+                            seg7_data <= std_logic_vector(to_unsigned(average_time, 16));
+                            --seg7_data <= x"0123";
+                            
+                            -- reset the game if any button is pressed
+                            --IF btnu = '1' OR btnl = '1' OR btnr = '1' OR btnd = '1' THEN
+                                --game_state <= I;
+                    --END IF;
+            END CASE;
+        END IF;
+    END PROCESS game_logic_proc;
+gen_squares: FOR i IN 0 TO 3 GENERATE
+        ball_inst : square
+            PORT MAP (
+                pixel_row => S_pixel_row,
+                pixel_col => S_pixel_col,
+                active    => active_holes(i),
+                x_pos     => hole_positions(i)(0),
+                y_pos     => hole_positions(i)(1),
+                red       => S_red(i),
+                green     => S_green(i),
+                blue      => S_blue(i)
+            );
+    END GENERATE;
 ```
 - Base code from [vga_top_holes.vhd](https://github.com/beartwoz/Whack-A-Mole/blob/c3509649d219f83ef390502cbf7bf8d1a7126aee/vga_top_holes.vhd) in [whack-a-mole](https://github.com/beartwoz/Whack-A-Mole)

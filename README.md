@@ -31,7 +31,6 @@ For our project we decided to work on creating a reaction test that would challe
 - Click design sources and copy the VHDL code from the repo.
 - Click contraints and copy the code from allcons.xdc
 - As an alternative, you can instead download files from Github and import them into your project when creating the project. The source file or files would still be imported during the Source step, and the constraint file or files would still be imported during the Constraints step.
-
 ### 2. Run synthesis
 ### 3. Run implementation
 ### 4. Generate bitstream, open hardware manager, and program device.
@@ -47,10 +46,12 @@ This module produces a 1 kHz clock output (clk2) from the system clock input. It
 This module defines a clock management module that generates a stable system clock (clk_out1) from a primary input clock (clk_in1). This module ensures that all time-dependent components—such as the VGA synchronization (vga_sync), the 1 kHz and 1 Hz clock dividers, and display timing logic—receive a precise and reliable clock signal.
 - Input: clk_in (from board)
 - Output: plk_clk
+- Code from [clk_wiz_0.vhd](https://github.com/beartwoz/Whack-A-Mole/blob/c3509649d219f83ef390502cbf7bf8d1a7126aee/clk_wiz_0.vhd) in [whack-a-mole](https://github.com/beartwoz/Whack-A-Mole)
 ### ***clk_wiz_0_clk_wiz.vhd***
 This module is an auto-generated clock management module from Vivado. This module is used to help ensure that the system operates with properly derived clock signals, helping reduce timing errors.
 - Input: clk_in1
 - Output: clk_out1
+- Code from [clk_wiz_0_clk_wiz.vhd](https://github.com/beartwoz/Whack-A-Mole/blob/c3509649d219f83ef390502cbf7bf8d1a7126aee/clk_wiz_0_clk_wiz.vhd) in [whack-a-mole](https://github.com/beartwoz/Whack-A-Mole)
 ### ***clock_1Hz***
 This module creates a 1 Hz clock pulse from a faster input clock. It uses a counter that toggles an internal signal every 50 million clock cycles, effectively dividing the clock to 1 Hz for the game timing controlling the rate at which the squares appear.
 - Input: pxl_clk (from clk_wiz_0)
@@ -137,5 +138,7 @@ ARCHITECTURE Behavioral OF square IS
 - Base code from [ball_moles.vhd](https://github.com/beartwoz/Whack-A-Mole/blob/c3509649d219f83ef390502cbf7bf8d1a7126aee/ball_moles.vhd) in [whack-a-mole](https://github.com/beartwoz/Whack-A-Mole)
 ### ***vga_sync.vhd***
 This module generates the necessary VGA timing signals to produce a correct image on screen. It takes a pixel clock and RGB inputs and outputs hsync, vsync, pixel row and column positions (pixel_row, pixel_col), and routed RGB signals.
+- Code from [vga_sync.vhd](https://github.com/beartwoz/Whack-A-Mole/blob/c3509649d219f83ef390502cbf7bf8d1a7126aee/vga_sync.vhd) in [whack-a-mole](https://github.com/beartwoz/Whack-A-Mole)
 ### ***vga_top_squares.vhd***
 This module serves as the top level entity named vga_top. This module directs the entire VGA display system receiving input from directional buttons (btnl, btnr, btnu, btnd) and driving the VGA output signals (vga_red, vga_green, vga_blue, vga_hsync, vga_vsync). It integrates submodules for clocking, synchronization, square drawing, and LED display. Additionally, it outputs data to a 7-segment display through SEG7_anode for score.
+- Base code from [vga_top_holes.vhd](https://github.com/beartwoz/Whack-A-Mole/blob/c3509649d219f83ef390502cbf7bf8d1a7126aee/vga_top_holes.vhd) in [whack-a-mole](https://github.com/beartwoz/Whack-A-Mole)

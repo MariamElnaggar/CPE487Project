@@ -349,4 +349,13 @@ gen_squares: FOR i IN 0 TO 3 GENERATE
 ```
 - Base code from [vga_top_holes.vhd](https://github.com/beartwoz/Whack-A-Mole/blob/c3509649d219f83ef390502cbf7bf8d1a7126aee/vga_top_holes.vhd) in [whack-a-mole](https://github.com/beartwoz/Whack-A-Mole)
 ## Conclusion
-* Conclude with a summary of the process itself – who was responsible for what components (preferably also shown by each person contributing to the github repository!), the timeline of work completed, any difficulties encountered and how they were solved, etc. (10 points of the Submission category)
+Dieter was responsible for documenting the process and assisting in troubleshooting coding issues, while Mariam focused on editing the code and writing the section of the report related to the modifications made.
+It took us about 2 weeks to get the final code to work:
+	1. We read the base code from the other projects
+ 	2. We worked on getting our display ready
+  	3. We wrote some code for the game
+   		a. Faced an issue with the code not stopping at 3 trials which was fixed after we implemented the FSM design and changed the counter the base code was using for time
+     	4. Implemented the FSM design
+      		a. Had a problem working with the clk_1Hz because different parts of the game_logic_proc had to happen faster than others so we instead used the pxl_clk for our process and added some equations to convert to milliseconds for the time
+		b. The code would not stop at 3 trials but would output the time after 3 trials which was due to a reset that we intially used, but we removed the reset because it would reset imediatly after display because the pxl_clk was too fast which caused the FSM to register the button click before the user could release the button from the last attempt
+      	5. Added code to convert the binary input to decimal in leddec

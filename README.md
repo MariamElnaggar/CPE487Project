@@ -142,7 +142,7 @@ This module generates the necessary VGA timing signals to produce a correct imag
 ### ***vga_top_squares.vhd***
 This module serves as the top level entity named vga_top. This module directs the entire VGA display system receiving input from directional buttons (btnl, btnr, btnu, btnd) and driving the VGA output signals (vga_red, vga_green, vga_blue, vga_hsync, vga_vsync). It integrates submodules for clocking, synchronization, square drawing, and LED display. Additionally, it outputs data to a 7-segment display through SEG7_anode for score.
 #### Modifications 
-1. We added btnl, btnr, btnu, and btnd and removed KB_col and KB_row because we will only use the buttons on the board not the keyboard
+1. Added btnl, btnr, btnu, and btnd and removed KB_col and KB_row because we will only use the buttons on the board not the keyboard
 ```
 ENTITY vga_top IS
     PORT (
@@ -163,9 +163,10 @@ ENTITY vga_top IS
     );
 END vga_top;
 ```
-2. We added some signals for measuring the reaction time and managing the clocks.
-3. We added our game states
-4. We removed of the some signals we will not be using in our project
+2. Added some signals for measuring the reaction time and managing the clocks.
+3. Modified some signals so they match our project.  (e.g. position array (0 to 3) instead of 0 to 15)
+4. Added our game states
+5. Removed of the some signals we will not be using in our project
 ```
 -- Mole Signals
     SIGNAL active_holes : STD_LOGIC_VECTOR(3 DOWNTO 0) := (OTHERS => '0'); -- Active mole holes

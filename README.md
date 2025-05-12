@@ -348,6 +348,9 @@ gen_squares: FOR i IN 0 TO 3 GENERATE
     END GENERATE;
 ```
 - Base code from [vga_top_holes.vhd](https://github.com/beartwoz/Whack-A-Mole/blob/c3509649d219f83ef390502cbf7bf8d1a7126aee/vga_top_holes.vhd) in [whack-a-mole](https://github.com/beartwoz/Whack-A-Mole)
+## Next Steps
+- Implement a reset using a different input
+- Use time-based randomization
 ## Conclusion
 Dieter was responsible for documenting the process and assisting in troubleshooting coding issues, while Mariam focused on editing the code and writing the section of the report related to the modifications made.
 It took us about 2 weeks to get the final code to work:

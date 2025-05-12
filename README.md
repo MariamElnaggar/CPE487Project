@@ -141,4 +141,68 @@ This module generates the necessary VGA timing signals to produce a correct imag
 - Code from [vga_sync.vhd](https://github.com/beartwoz/Whack-A-Mole/blob/c3509649d219f83ef390502cbf7bf8d1a7126aee/vga_sync.vhd) in [whack-a-mole](https://github.com/beartwoz/Whack-A-Mole)
 ### ***vga_top_squares.vhd***
 This module serves as the top level entity named vga_top. This module directs the entire VGA display system receiving input from directional buttons (btnl, btnr, btnu, btnd) and driving the VGA output signals (vga_red, vga_green, vga_blue, vga_hsync, vga_vsync). It integrates submodules for clocking, synchronization, square drawing, and LED display. Additionally, it outputs data to a 7-segment display through SEG7_anode for score.
+#### Modifications 
+1. We added btnl, btnr, btnu, and btnd and removed KB_col and KB_row because we will only use the buttons on the board not the keyboard
+```
+ENTITY vga_top IS
+    PORT (
+        clk_in    : IN STD_LOGIC;
+        vga_red   : OUT STD_LOGIC_VECTOR (2 DOWNTO 0);
+        vga_green : OUT STD_LOGIC_VECTOR (2 DOWNTO 0);
+        vga_blue  : OUT STD_LOGIC_VECTOR (1 DOWNTO 0);
+        vga_hsync : OUT STD_LOGIC;
+        vga_vsync : OUT STD_LOGIC;
+        --
+        btnl : IN STD_LOGIC;
+        btnr : IN STD_LOGIC;
+        btnu : IN STD_LOGIC;
+        btnd : IN STD_LOGIC;
+        --
+        SEG7_anode : OUT STD_LOGIC_VECTOR (7 DOWNTO 0); -- 7-segment anode outputs
+        SEG7_seg   : OUT STD_LOGIC_VECTOR (0 TO 6)  -- 7-segment segment outputs
+    );
+END vga_top;
+```
+2. We added some signals for measuring the reaction time and managing the clocks.
+3. We added our game states
+4. We removed of the some signals we will not be using in our project
+```
+-- Mole Signals
+    SIGNAL active_holes : STD_LOGIC_VECTOR(3 DOWNTO 0) := (OTHERS => '0'); -- Active mole holes
+    
+    -- Clock Signals
+    SIGNAL btn_clk : STD_LOGIC; -- Button clock
+    SIGNAL game_clk : STD_LOGIC; -- Slower clock for mole activation
+    SIGNAL cnt : STD_LOGIC_VECTOR(30 DOWNTO 0); -- Counter for generating clocks
+    
+    SIGNAL seg7_data : STD_LOGIC_VECTOR (15 DOWNTO 0); -- Score in BCD format for the 7-segment display
+    SIGNAL led_mpx : STD_LOGIC_VECTOR (2 DOWNTO 0); -- Multiplexing control for 7-segment display
+    
+    -- Miscellaneous Signals
+    SIGNAL random_index : INTEGER RANGE 0 TO 15; -- Randomly chosen mole index
+    SIGNAL game_on : STD_LOGIC := '1'; -- Indicates if the game is active
+    
+    -- reaction time 
+    TYPE reaction_times IS ARRAY (0 TO 2) OF INTEGER; -- Store 3 reaction times
+    SIGNAL rt : reaction_times := (0, 0, 0);
+    SIGNAL current_trial : INTEGER RANGE 0 TO 3 := 0; -- Track current trial (0-2)
+    SIGNAL timer_count : INTEGER := 0; -- Count clock cycles for reaction time
+    SIGNAL measuring_time : STD_LOGIC := '0'; -- Flag for when we're measuring reaction time
+    SIGNAL average_time : INTEGER := 0; -- Calculated average reaction time
+    SIGNAL wait_for_next_trial: STD_LOGIC := '0';
+     SIGNAL next_trial_counter: INTEGER := 0;
+    
+    -- states
+    TYPE game_state_type IS (I, W, C, D);
+    SIGNAL game_state : game_state_type := I;
+    
+    TYPE integer_array IS ARRAY (0 TO 1) OF INTEGER;
+    TYPE position_array IS ARRAY (0 TO 3) OF integer_array;
+    
+    -- clock
+    CONSTANT CLK_FREQ : INTEGER := 100000000; -- 100MHz clock frequency
+    CONSTANT DIVIDER : INTEGER := CLK_FREQ/1000; -- Converts clock cycles to ms
+    SIGNAL clk_1hz_out : STD_LOGIC;
+    SIGNAL clk_1khz_out : STD_LOGIC;
+```
 - Base code from [vga_top_holes.vhd](https://github.com/beartwoz/Whack-A-Mole/blob/c3509649d219f83ef390502cbf7bf8d1a7126aee/vga_top_holes.vhd) in [whack-a-mole](https://github.com/beartwoz/Whack-A-Mole)

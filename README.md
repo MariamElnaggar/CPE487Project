@@ -60,7 +60,7 @@ This module implements a display decoder that shows 4-digit values on an 8-digit
 - Input: led_mpx (used to choose the digits), seg7_data (data to display)
 - Output: SEG7_anode (anodes on the display), SEG7_seg (segments to turn on based on the digits)
 #### Modification
-We added the code below to convert our binary data input to decmial and display it on the 7-segment display.
+We added the code below to convert our binary data input to decmial and modified the code to display it on the 7-segment display.
 ```
 SIGNAL decimal_value : STD_LOGIC_VECTOR (15 DOWNTO 0);
 BEGIN
@@ -116,7 +116,25 @@ This module determines whether the current VGA pixel lies within a user-defined 
 #### Modification
 We changed the size of the squares and their colors
 ```
+ARCHITECTURE Behavioral OF square IS
+    CONSTANT hole_width  : INTEGER := 100; -- Width of each square
+    CONSTANT hole_height : INTEGER := 100; -- Height of each square
+...
+            IF active = '1' THEN
+                red <= '0'; -- Hole is active (green)
+                green <= '1';
+                blue <= '0';
+            ELSE
+                red <= '1'; -- Hole is inactive (red)
+                green <= '0';
+                blue <= '0';
+            END IF;
+        ELSE
+            red <= '0'; -- Outside the hole area (black)
+            green <= '0'; 
+            blue <= '0';
 ```
+- Base code from [ball_moles.vhd](https://github.com/beartwoz/Whack-A-Mole/blob/c3509649d219f83ef390502cbf7bf8d1a7126aee/ball_moles.vhd) in [whack-a-mole](https://github.com/beartwoz/Whack-A-Mole)
 ### ***vga_sync.vhd***
 This module generates the necessary VGA timing signals to produce a correct image on screen. It takes a pixel clock and RGB inputs and outputs hsync, vsync, pixel row and column positions (pixel_row, pixel_col), and routed RGB signals.
 ### ***vga_top_squares.vhd***

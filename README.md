@@ -1,15 +1,15 @@
 # Our Project
 ## Summary
-For our project we decided to work on creating a reaction test that would challege the player to react to the display as fast as they can. From when the game begins four red blocks would appear on the display and at a random time one will turn green. Once the player successfully hit the three neccessary blocks the NexysA7 100T board will display the players average reaction time. In order to accomplish this we used base code from the [clock](https://github.com/cfoote5/CPE487_FinalProject) and [whack-a-mole](https://github.com/beartwoz/Whack-A-Mole) projects. These projects provided a good starting point for implementing a clock that would display milliseconds and developing the VGA display that the player would interact with.
+For our project we decided to work on creating a reaction test that would challenge the player to react to the display as fast as they can. From when the game begins four red blocks would appear on the display and at a random time one will turn green. Once the player successfully hits the three necessary blocks the NexysA7 100T board will display the player's average reaction time. In order to accomplish this we used base code from the [clock](https://github.com/cfoote5/CPE487_FinalProject) and [whack-a-mole](https://github.com/beartwoz/Whack-A-Mole) projects. These projects provided a good starting point for implementing a clock that would display milliseconds and developing the VGA display that the player would interact with.
 ## Expected Behavior
 ![FSM](FSM1.png)
-- The VGA screen will display a four blocks (positioned up, down, left, and right) and whichever block turns green the player must hit the corresponding button on the board.
+- The VGA screen will display four blocks (positioned up, down, left, and right) and whichever block turns green the player must hit the corresponding button on the board.
 - The goal is to test how fast the player can react.
 - The game will play for three rounds.
-- The average time over the three rounds is the players score.
-- The players score will display on the board in milliseconds.
+- The average time over the three rounds is the player's score.
+- The player's score will display on the board in milliseconds.
 ### [Demonstration](https://drive.google.com/file/d/1wT0SU7qmNwO605OzWVExHnS3_MaBIyPG/view?usp=sharing)
-## Requirments
+## Requirements
 - Nexys A7 100T Board
 - Micro-USB to USB Cable
 - Computer with Vivado installed
@@ -22,7 +22,7 @@ For our project we decided to work on creating a reaction test that would challe
 - Choose Nexys A7-100T board for the project
 - Click 'Finish'
 - Click design sources and copy the VHDL code from the repo.
-- Click contraints and copy the code from allcons.xdc
+- Click constraints and copy the code from allcons.xdc
 - As an alternative, you can instead download files from Github and import them into your project when creating the project. The source file or files would still be imported during the Source step, and the constraint file or files would still be imported during the Constraints step.
 ### 2. Run synthesis
 ### 3. Run implementation
@@ -32,7 +32,7 @@ For our project we decided to work on creating a reaction test that would challe
 - Click 'Program Device' to download the program to the Nexys A7-100T board.
 ## Description of the modules
 ### ***clk_1kHz.vhd***
-This module produces a 1 kHz clock output (clk2) from the system clock input. It uses a counter that toggles the output every 50,000 cycles. This clock pulses every millisecond and was used to for the 7-segment display.
+This module produces a 1 kHz clock output (clk2) from the system clock input. It uses a counter that toggles the output every 50,000 cycles. This clock pulses every millisecond and was used for the 7-segment display.
 - Input: plk_clk (from clk_wiz_0)
 - Output: clk_1khz_out
 - Code from [clk_1kHz.vhd](https://github.com/cfoote5/CPE487_FinalProject/blob/92252b9b1d2d3259ba6e6eb15850c78f039931d4/clk_1kHz.vhd) in [clock](https://github.com/cfoote5/CPE487_FinalProject)
@@ -56,7 +56,7 @@ This module implements a display decoder that shows 4-digit values on an 8-digit
 - Input: led_mpx (used to choose the digits), seg7_data (data to display)
 - Output: SEG7_anode (anodes on the display), SEG7_seg (segments to turn on based on the digits)
 #### Modification
-We added the code below to convert our binary data input to decmial and modified the code to display it on the 7-segment display.
+We added the code below to convert our binary data input to decimal and modified the code to display it on the 7-segment display.
 ```
 SIGNAL decimal_value : STD_LOGIC_VECTOR (15 DOWNTO 0);
 BEGIN
@@ -224,7 +224,7 @@ COMPONENT clk_1hz IS
       );
     END COMPONENT;
 ```
-8. Added instanses of the clocks in our process
+8. Added instances of the clocks in our process
 9. Added display process that depends on the clk_1kHz timing
 10. Removed the base code's game logic and added our own
 11. Edited gen_moles so it generates 4 squares instead of 16
@@ -349,16 +349,17 @@ gen_squares: FOR i IN 0 TO 3 GENERATE
 ```
 - Base code from [vga_top_holes.vhd](https://github.com/beartwoz/Whack-A-Mole/blob/c3509649d219f83ef390502cbf7bf8d1a7126aee/vga_top_holes.vhd) in [whack-a-mole](https://github.com/beartwoz/Whack-A-Mole)
 ## Next Steps
-- Implement a reset using a different input
-- Use time-based randomization
+- We would like to implement a reset using btnc so the user could play the game multiple times.
+- We would also want to try to use a time-base implementation for the randomization since the game repeats the same sequence after every three trials. This is because we used a random seed and a function to update it resulting in seemingly random times across the three trials but repeating the pattern if the game is restarted.
 ## Conclusion
 Dieter was responsible for documenting the process and assisting in troubleshooting coding issues, while Mariam focused on editing the code and writing the section of the report related to the modifications made.
 It took us about 2 weeks to get the final code to work:
  1. We read the base code from the other projects
- 2. We worked on getting our display ready
+ 2. We worked on getting our monitor display ready
  3. We wrote some code for the game
-- Faced an issue with the code not stopping at 3 trials which was fixed after we implemented the FSM design and changed the counter the base code was using for time
+- Faced an issue with the code not stopping at 3 trials which was fixed after we implemented the FSM design and changed the counter the base code was using for time.
+- Had some problems with the randomization since we tried to use time based randomization based on the clock but this caused some synchronization errors so we went back to the random seed and function method.
  4. Implemented the FSM design
-- Had a problem working with the clk_1Hz because different parts of the game_logic_proc had to happen faster than others so we instead used the pxl_clk for our process and added some equations to convert to milliseconds for the time
-- The code would not stop at 3 trials but would output the time after 3 trials which was due to a reset that we intially used, but we removed the reset because it would reset imediatly after display because the pxl_clk was too fast which caused the FSM to register the button click before the user could release the button from the last attempt
+- Had a problem working with the clk_1Hz because different parts of the game_logic_proc had to happen faster than others so we instead used the pxl_clk for our process and added formulas to convert to milliseconds for the time.
+- The code would not stop at 3 trials but would output the time after 3 trials which was due to a reset that we initially used. The pxl_clk was too fast which caused the FSM to register the button click before the user could release the button from the last attempt. We removed the reset because it would reset immediately after display, but we think using a specific reset input would fix this issue.
 5. Added code to convert the binary input to decimal in leddec
